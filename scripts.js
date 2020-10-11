@@ -9,6 +9,12 @@
 
 
 const strapiUrl = "http://18.208.253.205:1337"; //url to strapi API endpoint
+let authToken = "";
+const formElement = document.querySelector('form');
+formElement.addEventListener('submit', e => {
+  e.preventDefault();
+  handleFormSubmit();
+});
 
 /* getAllArtworks
 Function calls to strapi api to get all artworks in db
@@ -335,28 +341,103 @@ const axiosDeleteFromStrapi = async (url, headerConfig) => {
   }
 }
 
+
+/*axiosUploadToStrapi
+Function makes a generic post delete to strapi API
+
+Accepts:
+  - token - Authorization token
+  - files - files to upload
+  - entryId -  the id of the entry to associate to the file being upload
+  - entryType -  the collection type of the entry being associated to the file (examples of collection types: artwork, campus)
+  - entryFieldName -  the field name from the collection type (examples for artwork would be primary_image, other_images)
+Returns: full post response from strapi api if successfull or -1 if failed
+*/
+const axiosUploadToStrapi = async (token, file, entryId, entryType, entryFieldName) => {
+
+  const sendConfig = {
+    headers: {
+      'Authorization': "Bearer " + token,
+      'Content-Type': 'multipart/form-data'
+    }
+  };
+
+
+  const formData = new FormData()
+  formData.append('files', file)
+  formData.append('ref', entryType) // optional, you need it if you want to link the image to an entry
+  formData.append('refId', entryId) // optional, you need it if you want to link the image to an entry
+  formData.append('field', entryFieldName) // optional, you need it if you want to link the image to an entry
+
+
+  try {
+    returnedData = await axios.post(`${strapiUrl}/upload`, formData, sendConfig);
+  } catch (error) {
+    console.log(error);
+    console.log(url);
+    console.log(data);
+    console.log(headerConfig);
+  }
+
+  if(returnedData.status == 200){
+    return returnedData;
+  }else{
+    console.log('Error in axiosUploadToStrapi');
+    console.log(returnedData);
+    return -1;
+  }
+}
+
+const handleFormSubmit = async () => {
+
+  //const request = new XMLHttpRequest();
+
+  const formElements = formElement.elements;
+
+  const data = {};
+
+  for (let i = 0; i < formElements.length; i++) {
+    const currentElement = formElements[i];
+    if (!['submit', 'file'].includes(currentElement.type)) {
+      data[currentElement.name] = currentElement.value;
+    }
+  }
+  var newArtwork = await createArtwork(authToken, data);
+
+  if(formElements["primary_image"].files.length > 0){
+    axiosUploadToStrapi(authToken, formElements["primary_image"].files[0], newArtwork.data.id, "artwork", "primary_image");
+  }
+
+  for(let i = 0; i < formElements["other_images"].files.length; i++ ){
+    axiosUploadToStrapi(authToken, formElements["other_images"].files[i], newArtwork.data.id, "artwork", "other_images");
+  }
+
+}
+
+
 /* MAIN - testing other functions */
 const main = async () => {
 
-  const authToken = await loginAndGetToken("artworkmanager","Cunycampusart1");
+  authToken = await loginAndGetToken("artworkmanager","Cunycampusart1");
   console.log("authToken", authToken);
 
-  await getAllArtworks();
-  await getArtworkById(1);
-  await getAllCampuses();
-  await getCampusById(1);
-  await getArtworksInCampusByName("brooklyn college");
-  await getArtworksInCampusById(1);
+  // await getAllArtworks();
+  // await getArtworkById(1);
+  // await getAllCampuses();
+  // await getCampusById(1);
+  // await getArtworksInCampusByName("brooklyn college");
+  // await getArtworksInCampusById(1);
 
-  const newArtwork = await createArtwork(authToken, {title: "new artwork from js", artist:"new artist", description:"test description", year: "2000"});
-  console.log("new artwork",newArtwork);
-  await updateArtworkById(authToken, newArtwork.data.id, {title:"some new title from update function"});
-  await deleteArtworkById(authToken, newArtwork.data.id);
-
-  const newCampus  = await createCampus(authToken, {campus_name: "BMCC"});
-  console.log("new campus",newCampus);
-  await updateCampusById(authToken, newCampus.data.id, {campus_name:"test update campus name"});
-  await deleteCampusById(authToken,  newCampus.data.id);
+  // const newArtwork = await createArtwork(authToken, {title: "new artwork from js", artist:"new artist", description:"test description", year: "2000"});
+  // console.log("new artwork",newArtwork);
+  // await updateArtworkById(authToken, newArtwork.data.id, {title:"some new title from update function"});
+  // //await updateArtworkById(authToken, 3, {campus:1}); //example of updating artworks campus
+  // await deleteArtworkById(authToken, newArtwork.data.id);
+  //
+  // const newCampus  = await createCampus(authToken, {campus_name: "BMCC"});
+  // console.log("new campus",newCampus);
+  // await updateCampusById(authToken, newCampus.data.id, {campus_name:"test update campus name"});
+  // await deleteCampusById(authToken,  newCampus.data.id);
 
 
 };

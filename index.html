@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Strapi Axios calls</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+  <link rel="stylesheet" href="Styles.css">
+
+
+</head>
+
+<body>
+  <h1>Test Page</h1>
+
+
+
+  <form>
+    <!-- Can be multiple files if you setup "collection" instead of "model" -->
+    <!-- <input type="text" name="name" /> -->
+    <!-- <input type="file" name="cover" /> -->
+
+    <div class="input-container">
+      <label for="title">title: </label><br>
+      <input type="text" name="title" />
+    </div>
+    <div class="input-container">
+      <label for="artist">artist: </label><br>
+     <input type="text" name="artist" />
+   </div>
+    <div class="input-container">
+      <label for="description">description:</label><br>
+      <textarea name="description" /></textarea>
+    </div>
+    <div class="input-container">
+      <label for="primary_image">Select primary_image:</label><br>
+      <input type="file" name="primary_image" />
+    </div>
+    <div class="input-container">
+      <label for="other_images">Select other_images:</label><br>
+      <input type="file" name="other_images" multiple/>
+    </div>
+    <div class="input-container">
+      <label for="year">year</label><br>
+      <input type="text" name="year" />
+    </div>
+    <div class="input-container">
+      <label for="campus">campus</label><br>
+      <input type="text" name="campus" />
+    </div>
+    <input type="submit" value="Submit" />
+  </form>
+
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+<script src="scripts.js"></script>
+</html>
