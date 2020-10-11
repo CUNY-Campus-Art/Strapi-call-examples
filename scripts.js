@@ -343,7 +343,7 @@ const axiosDeleteFromStrapi = async (url, headerConfig) => {
 
 
 /*axiosUploadToStrapi
-Function makes a generic post delete to strapi API
+Function makes a generic post upload strapi API
 
 Accepts:
   - token - Authorization token
