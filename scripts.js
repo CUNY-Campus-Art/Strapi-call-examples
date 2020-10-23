@@ -8,7 +8,7 @@
 //https://strapi.io/documentation/v3.x/content-api/api-endpoints.html#endpoints
 
 
-const strapiUrl = "http://18.208.253.205:1337"; //url to strapi API endpoint
+const strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
 let authToken = "";
 const formElement = document.querySelector('form');
 formElement.addEventListener('submit', e => {
@@ -418,7 +418,7 @@ const handleFormSubmit = async () => {
 /* MAIN - testing other functions */
 const main = async () => {
 
-  authToken = await loginAndGetToken("artworkmanager","Cunycampusart1");
+  authToken = await loginAndGetToken("artworkmanager","2h2Ghswq$%Oxcl");
   console.log("authToken", authToken);
 
   // await getAllArtworks();
