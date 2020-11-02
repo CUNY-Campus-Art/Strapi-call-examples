@@ -108,7 +108,43 @@ class StrapiApiConnection {
     };
     const sendData = JSON.stringify(dataIn);
     const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/artworks',sendData, sendConfig);
+    console.log("createArtwork returnData",returnData);
+    this.createAndUploadQRImageForArtwork(token, returnData.data.id);
     return returnData;
+  }
+
+  /* createAndUploadQRImageForArtwork
+  Function creates a qr code image and uploads the image to the specified artwork entry
+
+  Accepts:
+    - token - authentication token that was retrieved from logging in
+    - id - id of artwork entry to create and upload qr image too.
+  Returns:
+    - full post response from strapi api if successfull or -1 if failed
+  */
+  createAndUploadQRImageForArtwork = async (token, id) => {
+    QRCode.toDataURL('cuny-campus-art-'+id)
+      .then(qrUrl => {
+
+
+        let arr = qrUrl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        let newFile = new File([u8arr], 'cuny-campus-art-'+id+'.png', {type:mime});
+
+
+        this.axiosUploadToStrapi(token, newFile, id, "artwork", "qr_image");
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   /* updateArtworkById
