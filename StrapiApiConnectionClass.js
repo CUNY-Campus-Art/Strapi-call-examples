@@ -1,9 +1,12 @@
 class StrapiApiConnection {
 
-  constructor() {
-    this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
+  constructor(username, password) {
+    //this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
+
+    this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
     this.authToken = "";
     this.user = {}
+
   }
 
   /* getAllArtworks
@@ -94,22 +97,21 @@ class StrapiApiConnection {
   Function calls to strapi API to create a new artwork entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - dataIn - data for a new artwork entry, example: {title: "new artwork from js", artist:"new artist", description:"test description", year: "2000"}
   Returns:
     - full post response from strapi api if successfull or -1 if failed
   */
-  createArtwork = async (token, dataIn) => {
+  createArtwork = async (dataIn) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + this.authToken,
         'Content-Type': 'application/json'
       }
     };
     const sendData = JSON.stringify(dataIn);
     const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/artworks',sendData, sendConfig);
     console.log("createArtwork returnData",returnData);
-    this.createAndUploadQRImageForArtwork(token, returnData.data.id);
+    this.createAndUploadQRImageForArtwork(returnData.data.id);
     return returnData;
   }
 
@@ -117,50 +119,50 @@ class StrapiApiConnection {
   Function creates a qr code image and uploads the image to the specified artwork entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - id - id of artwork entry to create and upload qr image too.
   Returns:
     - full post response from strapi api if successfull or -1 if failed
   */
-  createAndUploadQRImageForArtwork = async (token, id) => {
-    QRCode.toDataURL('cuny-campus-art-'+id)
-      .then(qrUrl => {
+  createAndUploadQRImageForArtwork = async (id) => {
+    if(QRCode){
+      QRCode.toDataURL('cuny-campus-art-'+id)
+        .then(qrUrl => {
 
 
-        let arr = qrUrl.split(','),
-            mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]),
-            n = bstr.length,
-            u8arr = new Uint8Array(n);
+          let arr = qrUrl.split(','),
+              mime = arr[0].match(/:(.*?);/)[1],
+              bstr = atob(arr[1]),
+              n = bstr.length,
+              u8arr = new Uint8Array(n);
 
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
+          while(n--){
+              u8arr[n] = bstr.charCodeAt(n);
+          }
 
-        let newFile = new File([u8arr], 'cuny-campus-art-'+id+'.png', {type:mime});
+          let newFile = new File([u8arr], 'cuny-campus-art-'+id+'.png', {type:mime});
 
 
-        this.axiosUploadToStrapi(token, newFile, id, "artwork", "qr_image");
-      })
-      .catch(err => {
-        console.error(err)
-      })
+          this.axiosUploadToStrapi(this.authToken, newFile, id, "artwork", "qr_image");
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    }
   }
 
   /* updateArtworkById
   Function calls to strapi API to updat a artwork entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - id - id of artwork entry
     - dataIn - data for artwork entry, example: {title: "updated artwork from js"}
   Returns:
     - full post response from strapi api if successfull or -1 if failed
   */
-  updateArtworkById = async (token, id, dataIn) => {
+  updateArtworkById = async (id, dataIn) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + this.authToken,
         'Content-Type': 'application/json'
       }
     };
@@ -173,15 +175,14 @@ class StrapiApiConnection {
   Function calls to strapi API to delete a artwork entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - id - id of artwork entry
   Returns:
     - delete response from strapi API
   */
-  deleteArtworkById = async (token, id) => {
+  deleteArtworkById = async (id) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token
+        'Authorization': "Bearer " + this.authToken
       }
     };
     const returnData = await this.axiosDeleteFromStrapi(this.strapiUrl + '/artworks/' + id, sendConfig);
@@ -192,15 +193,14 @@ class StrapiApiConnection {
   Function calls to strapi API to create a new campus entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - dataIn - data for a new campus entry, example: {campus_name: "BMCC"}
   Returns:
     - full post response from strapi api if successfull or -1 if failed
   */
-  createCampus = async (token, dataIn) => {
+  createCampus = async (dataIn) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + this.authToken,
         'Content-Type': 'application/json'
       }
     };
@@ -213,16 +213,15 @@ class StrapiApiConnection {
   Function calls to strapi API to updat a campus entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - id - id of artwork entry
     - dataIn - data for a new campus entry, example: {campus_name: "BMCC"}
   Returns:
     - full post response from strapi api if successfull or -1 if failed
   */
-  updateCampusById = async (token, id, dataIn) => {
+  updateCampusById = async (id, dataIn) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + this.authToken,
         'Content-Type': 'application/json'
       }
     };
@@ -235,15 +234,14 @@ class StrapiApiConnection {
   Function calls to strapi API to delete a campus entry
 
   Accepts:
-    - token - authentication token that was retrieved from logging in
     - id - id of campus entry
   Returns:
     - delete response from strapi API
   */
-  deleteCampusById = async (token, id) => {
+  deleteCampusById = async (id) => {
     const sendConfig = {
       headers: {
-        'Authorization': "Bearer " + token
+        'Authorization': "Bearer " + this.authToken
       }
     };
     const returnData = await this.axiosDeleteFromStrapi(this.strapiUrl + '/campuses/' + id, sendConfig);
@@ -287,7 +285,6 @@ class StrapiApiConnection {
   Returns: authentication token if call is completed succesfully or -1 if there was a error.
   */
   loginAndGetToken = async (id, pw) => {
-
     let returnData = await this.loginUser(id, pw);
 
     if(returnData.status == 200){
@@ -297,6 +294,138 @@ class StrapiApiConnection {
     }
   }
 
+  /* loginAndGetUser
+  Function calls to strapi api to login a user and get user object
+  Accepts:
+   - id - user id (email, username)
+   - pw - password for the respective account
+  Returns:user object
+  */
+  loginAndGetUser = async (id, pw) => {
+    let returnData = await this.loginUser(id, pw);
+
+    if(returnData.status == 200){
+      return returnData.data.user;
+    }else{
+      return -1;
+    }
+  }
+
+  /* loginAndGetUser
+  Function to get user object
+  Returns:saved user object
+  */
+  getUser = () => {
+  return this.user;
+  }
+
+  /* getToken
+  Function to get authentication token
+  Returns:saved authentication token
+  */
+  getToken = () => {
+  return this.authToken;
+  }
+
+
+  /* syncRemoteToLocalUser
+  Function to get user profile data from api and update local user object;
+  Returns:user object from api
+  */
+  syncRemoteToLocalUser = async () => {
+    const sendConfig = {
+      headers: {
+        'Authorization': "Bearer " + this.authToken
+      }
+    };
+
+    let returnData  = await axios.get(this.strapiUrl + '/users/profile', sendConfig);
+
+    this.user = returnData.data;
+    return returnData;
+  }
+
+  /* updateRemoteUser
+  Function updates user fields
+  Accepts:
+   - dataIn - a json parsable object in the form { 'fieldname': fieldvalue }, the field names must be values that exist in the user model
+   --- example call to the function con.updateRemoteUser({'first_name':bob});
+  Returns: api request reponse
+  */
+  updateRemoteUser = async (dataIn) => {
+    const sendConfig = {
+      headers: {
+        'Authorization': "Bearer " + this.authToken,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const sendData = JSON.stringify(dataIn);
+    let response = await con.axiosPutToStrapi(this.strapiUrl+"/users/profile", dataIn, sendConfig);
+    console.log(response);
+    return response;
+  }
+
+  /* addScannedArtworkToUser
+  Function that adds to users scanned artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addScannedArtworkToUser = async (artworkIdArray) => {
+    await this.syncRemoteToLocalUser();
+
+    let existingArtworks = [];
+    this.user.scanned_artworks.forEach( artwork => {
+      existingArtworks.push(artwork.id);
+    })
+
+    let sendArray = existingArtworks.concat(artworkIdArray);
+    sendArray = [...new Set([...existingArtworks,...artworkIdArray])]
+
+    let response = await this.updateRemoteUser({'scanned_artworks':sendArray});
+    return response;
+  }
+
+  /* removeScannedArtworkFromUser
+  Function that removes from users scanned artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeScannedArtworkFromUser = async (artworkIdArray) => {
+    await this.syncRemoteToLocalUser();
+
+    let existingArtworks = [];
+    this.user.scanned_artworks.forEach( artwork => {
+      existingArtworks.push(artwork.id);
+    })
+
+    for(let i = 0; i<artworkIdArray.length;i++){
+      let j = 0;
+      while (j < existingArtworks.length) {
+        if (existingArtworks[j] === artworkIdArray[i]) {
+          existingArtworks.splice(j, 1);
+        } else {
+          ++j;
+        }
+      }
+    }
+
+    let response = await this.updateRemoteUser({'scanned_artworks':existingArtworks});
+    return response;
+  }
+
+
+  /* axiosPostToStrapi
+  Function makes a generic post call to strapi API using provided information
+
+  Accepts:
+    - url - API route for the post call
+    - data - data to be sent with the post call
+    - headerConfig - header data to be sent with the post call
+  Returns: full post response from strapi api if successfull or -1 if failed
+  */
   axiosPostToStrapi = async (url, data, headerConfig) => {
     var returnedData = {status:-1};
     try {
@@ -324,7 +453,7 @@ class StrapiApiConnection {
     - url - API route for the post call
     - data - data to be sent with the post call
     - headerConfig - header data to be sent with the post call
-  Returns: full post response from strapi api if successfull or -1 if failed
+  Returns: full put response from strapi api if successfull or -1 if failed
   */
   axiosPutToStrapi = async (url, data, headerConfig) => {
     var returnedData = {status:-1};

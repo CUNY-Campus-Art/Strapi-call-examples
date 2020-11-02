@@ -46,9 +46,21 @@ const handleFormSubmit = async () => {
 
 /* MAIN - testing other functions */
 const main = async () => {
-  con = new StrapiApiConnection();
-  authToken = await con.loginAndGetToken("artworkmanager","2h2Ghswq$%Oxcl");
+
+
+  // con = new StrapiApiConnection();
+  //await con.loginUser("testuser@fakephonymail.com","password123");
+  // await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
+
+  // con.addScannedArtworkToUser([3,4,5,6]);
+  //con.removeScannedArtworkFromUser([3]);
+
+  //authToken = await con.loginAndGetToken("artworkmanager","2h2Ghswq$%Oxcl");
   //authToken = await con.loginAndGetToken("Ccampbell@ybrooklyn.com","cunygallery");
+
+  // con.syncRemoteToLocalUser();
+  // console.log(con.getUser());
+  // console.log(con.getToken());
   // console.log("con.user", con.user);
   // console.log("authToken", authToken);
 
@@ -58,17 +70,17 @@ const main = async () => {
   // await con.getCampusById(1);
   // await con.getArtworksInCampusByName("brooklyn college");
   // await con.getArtworksInCampusById(1);
-
-  // const newArtwork = await con.createArtwork(authToken, {title: "new artwork from js", artist:"new artist", description:"test description", year: "2000"});
-  // console.log("new artwork",newArtwork);
-  // await con.updateArtworkById(authToken, newArtwork.data.id, {title:"some new title from update function"});
-  // await con.updateArtworkById(authToken, 3, {campus:1}); //example of updating artworks campus
-  // await con.deleteArtworkById(authToken, newArtwork.data.id);
   //
-  // const newCampus  = await con.createCampus(authToken, {campus_name: "BMCC"});
+  // const newArtwork = await con.createArtwork({title: "new artwork from js", artist:"new artist", description:"test description", year: "2000"});
+  // console.log("new artwork",newArtwork);
+  // await con.updateArtworkById(newArtwork.data.id, {title:"some new title from update function"});
+  // await con.updateArtworkById(3, {campus:1}); //example of updating artworks campus
+  // await con.deleteArtworkById(newArtwork.data.id);
+  //
+  // const newCampus  = await con.createCampus({campus_name: "BMCC"});
   // console.log("new campus",newCampus);
-  // await con.updateCampusById(authToken, newCampus.data.id, {campus_name:"test update campus name"});
-  // await con.deleteCampusById(authToken,  newCampus.data.id);
+  // await con.updateCampusById(newCampus.data.id, {campus_name:"test update campus name"});
+  // await con.deleteCampusById(newCampus.data.id);
 
 
 };
