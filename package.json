@@ -1,0 +1,22 @@
+{
+  "name": "strapi-call-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "StrapiApiConnectionClass.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CUNY-Campus-Art/Strapi-call-examples.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CUNY-Campus-Art/Strapi-call-examples/issues"
+  },
+  "homepage": "https://github.com/CUNY-Campus-Art/Strapi-call-examples#readme",
+  "dependencies": {
+    "qrcode": "^1.4.4"
+  }
+}
