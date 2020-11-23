@@ -560,7 +560,6 @@ class StrapiApiConnection {
   Function makes a generic post upload strapi API
 
   Accepts:
-    - token - Authorization token
     - files - files to upload
     - entryId -  the id of the entry to associate to the file being upload
     - entryType -  the collection type of the entry being associated to the file (examples of collection types: artwork, campus)
