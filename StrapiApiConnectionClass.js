@@ -1,9 +1,8 @@
 class StrapiApiConnection {
 
   constructor(username, password) {
-    //this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
-
-    this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
+    this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
+    //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
     this.authToken = "";
     this.user = {}
 
