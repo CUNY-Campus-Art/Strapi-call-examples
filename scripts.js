@@ -31,14 +31,14 @@ const handleFormSubmit = async () => {
       data[currentElement.name] = currentElement.value;
     }
   }
-  var newArtwork = await con.createArtwork(authToken, data);
+  var newArtwork = await con.createArtwork(data);
 
   if(formElements["primary_image"].files.length > 0){
-    con.axiosUploadToStrapi(authToken, formElements["primary_image"].files[0], newArtwork.data.id, "artwork", "primary_image");
+    con.axiosUploadToStrapi(formElements["primary_image"].files[0], newArtwork.data.id, "artwork", "primary_image");
   }
 
   for(let i = 0; i < formElements["other_images"].files.length; i++ ){
-    con.axiosUploadToStrapi(authToken, formElements["other_images"].files[i], newArtwork.data.id, "artwork", "other_images");
+    con.axiosUploadToStrapi(formElements["other_images"].files[i], newArtwork.data.id, "artwork", "other_images");
   }
 
 }
@@ -48,9 +48,10 @@ const handleFormSubmit = async () => {
 const main = async () => {
 
 
-  // con = new StrapiApiConnection();
+  con = new StrapiApiConnection();
+
   //await con.loginUser("testuser@fakephonymail.com","password123");
-  // await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
+  await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
 
   // con.addScannedArtworkToUser([3,4,5,6]);
   //con.removeScannedArtworkFromUser([3]);

@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Strapi Axios calls</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+  <link rel="stylesheet" href="Styles.css">
+
+
+</head>
+
+<body>
+  <h1>Test Page</h1>
+
+
+
+  <form>
+      <!-- Can be multiple files if you setup "collection" instead of "model" -->
+      <!-- <input type="text" name="name" /> -->
+      <!-- <input type="file" name="cover" /> -->
+
+      <div class="input-container">
+        <label for="email">email: </label><br>
+        <input type="text" name="email" />
+      </div>
+
+    <div class="input-container">
+      <label for="password">password: </label><br>
+      <input type="text" name="password" />
+    </div>
+
+    <div class="input-container">
+      <label for="username">username</label><br>
+      <input type="text" name="username" />
+    </div>
+
+    <div class="input-container">
+      <label for="first_name">first_name</label><br>
+      <input type="text" name="first_name" />
+    </div>
+
+    <div class="input-container">
+      <label for="last_name">last_name</label><br>
+      <input type="text" name="last_name" />
+    </div>
+
+    <div class="input-container">
+      <label for="profile_picture">Select profile_picture:</label><br>
+      <input type="file" name="profile_picture" />
+    </div>
+    
+    <input type="submit" value="Submit" />
+  </form>
+
+  <a href="index.html">index</a>
+  <a href="userregisteration.html">userregisteration</a>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+<script src="https://cunycampusart.com/scripts/qrcode.min.js"></script>
+<script src="StrapiApiConnectionClass.js"></script>
+<script src="userregisteration.js"></script>
+</html>
