@@ -258,7 +258,8 @@ class StrapiApiConnection {
     - username - text
     - fistName - text
     - lastName - text
-    - file - a Buffer or Stream
+    - campusId - text/number
+    - file - a Buffer or Stream (currently not working, needs fix)
 
   Returns: object contain a sucess (boolean) variable that indicates if registeration 
            was succesful or not and either a api response if successful (user data and auth token) 
@@ -267,7 +268,7 @@ class StrapiApiConnection {
             ---- more than 1 error message example: message[0].messages[0]
             ---- 1 error message example: {id: "Auth.form.error.email.taken", message: "Email is already taken."}
   */
- createUser = async (email, pw, username, firstName ="", lastName = "", file) => { 
+ createUser = async (email, pw, username, firstName ="", lastName = "", campusId, file) => { 
   let error;
   let response;
   await axios.post(this.strapiUrl + '/auth/local/register', {
@@ -275,7 +276,8 @@ class StrapiApiConnection {
     email: email,
     password: pw,
     first_name:firstName,
-    last_name:lastName
+    last_name:lastName,
+    campus:campusId
   })
   .then(res => {
     response =  res.data;

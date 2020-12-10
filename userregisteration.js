@@ -38,6 +38,7 @@ const handleFormSubmit = async () => {
                                         formElements["username"].value, 
                                         formElements["first_name"].value, 
                                         formElements["last_name"].value,
+                                        formElements["campus_id"].value,
                                         formElements["profile_picture"].files[0] );
 
 
