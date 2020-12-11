@@ -53,6 +53,9 @@ const main = async () => {
   await con.loginUser("newuser@testmail.com","password");
   //await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
 
+  //con.addPointsToUser(10);
+  //con.removePointsFromUser(10);
+
   // await con.addScannedArtworkToUser([3,4,5,6]);
   // await con.addLikedArtworkToUser([3,4,5,6]);
   // await con.addDislikedArtworkToUser([3,4,5,6]);

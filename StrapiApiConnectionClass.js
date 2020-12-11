@@ -17,7 +17,7 @@ class StrapiApiConnection {
   - JSON data for all artworks
   */
   getAllArtworks = async () => {
-    const { data } = await axios.get(this.strapiUrl+'/artworks');
+    const { data } = await axios.get(this.strapiUrl + '/artworks');
     console.log("getAllArtworks", data);
     return data;
   };
@@ -31,7 +31,7 @@ class StrapiApiConnection {
    - JSON data for the entry
   */
   getArtworkById = async (id) => {
-    const { data } = await axios.get(this.strapiUrl+'/artworks/'+id);
+    const { data } = await axios.get(this.strapiUrl + '/artworks/' + id);
     console.log("getArtworkById", data);
     return data;
   };
@@ -45,7 +45,7 @@ class StrapiApiConnection {
    - JSON data for all campuses
   */
   getAllCampuses = async () => {
-    const { data } = await axios.get(this.strapiUrl+'/campuses');
+    const { data } = await axios.get(this.strapiUrl + '/campuses');
     console.log("getAllCampuses", data);
     return data;
   };
@@ -59,7 +59,7 @@ class StrapiApiConnection {
    - JSON data for the entry
   */
   getCampusById = async (id) => {
-    const { data } = await axios.get(this.strapiUrl+'/campuses/'+id);
+    const { data } = await axios.get(this.strapiUrl + '/campuses/' + id);
     console.log("getCampusById", data);
     return data;
   };
@@ -73,7 +73,7 @@ class StrapiApiConnection {
    - JSON data for all artworks associated to the campus
   */
   getArtworksInCampusByName = async (campusName) => {
-    const { data } = await axios.get(this.strapiUrl+'/artworks?campus.campus_name_contains='+campusName);
+    const { data } = await axios.get(this.strapiUrl + '/artworks?campus.campus_name_contains=' + campusName);
     console.log("getArtworksInCampusByName", data);
     return data;
   };
@@ -87,7 +87,7 @@ class StrapiApiConnection {
    - JSON data for all artworks associated to the campus
   */
   getArtworksInCampusById = async (campusId) => {
-    const { data } = await axios.get(this.strapiUrl+'/artworks?campus.id='+campusId);
+    const { data } = await axios.get(this.strapiUrl + '/artworks?campus.id=' + campusId);
     console.log("getArtworksInCampusById", data);
     return data;
   };
@@ -108,8 +108,8 @@ class StrapiApiConnection {
       }
     };
     const sendData = JSON.stringify(dataIn);
-    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/artworks',sendData, sendConfig);
-    console.log("createArtwork returnData",returnData);
+    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/artworks', sendData, sendConfig);
+    console.log("createArtwork returnData", returnData);
     this.createAndUploadQRImageForArtwork(returnData.data.id);
     return returnData;
   }
@@ -123,22 +123,22 @@ class StrapiApiConnection {
     - full post response from strapi api if successfull or -1 if failed
   */
   createAndUploadQRImageForArtwork = async (id) => {
-    if(QRCode){
-      QRCode.toDataURL('cuny-campus-art-'+id)
+    if (QRCode) {
+      QRCode.toDataURL('cuny-campus-art-' + id)
         .then(qrUrl => {
 
 
           let arr = qrUrl.split(','),
-              mime = arr[0].match(/:(.*?);/)[1],
-              bstr = atob(arr[1]),
-              n = bstr.length,
-              u8arr = new Uint8Array(n);
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
 
-          while(n--){
-              u8arr[n] = bstr.charCodeAt(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
           }
 
-          let newFile = new File([u8arr], 'cuny-campus-art-'+id+'.png', {type:mime});
+          let newFile = new File([u8arr], 'cuny-campus-art-' + id + '.png', { type: mime });
 
 
           this.axiosUploadToStrapi(newFile, id, "artwork", "qr_image");
@@ -166,7 +166,7 @@ class StrapiApiConnection {
       }
     };
     const sendData = JSON.stringify(dataIn);
-    const returnData = await this.axiosPutToStrapi(this.strapiUrl + '/artworks/' + id,sendData, sendConfig);
+    const returnData = await this.axiosPutToStrapi(this.strapiUrl + '/artworks/' + id, sendData, sendConfig);
     return returnData;
   }
 
@@ -204,7 +204,7 @@ class StrapiApiConnection {
       }
     };
     const sendData = JSON.stringify(dataIn);
-    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/campuses',sendData, sendConfig);
+    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/campuses', sendData, sendConfig);
     return returnData;
   }
 
@@ -225,7 +225,7 @@ class StrapiApiConnection {
       }
     };
     const sendData = JSON.stringify(dataIn);
-    const returnData = await this.axiosPutToStrapi(this.strapiUrl + '/campuses/' + id,sendData, sendConfig);
+    const returnData = await this.axiosPutToStrapi(this.strapiUrl + '/campuses/' + id, sendData, sendConfig);
     return returnData;
   }
 
@@ -268,39 +268,39 @@ class StrapiApiConnection {
             ---- more than 1 error message example: message[0].messages[0]
             ---- 1 error message example: {id: "Auth.form.error.email.taken", message: "Email is already taken."}
   */
- createUser = async (email, pw, username, firstName ="", lastName = "", campusId, file) => { 
-  let error;
-  let response;
-  await axios.post(this.strapiUrl + '/auth/local/register', {
-    username: username,
-    email: email,
-    password: pw,
-    first_name:firstName,
-    last_name:lastName,
-    campus:campusId
-  })
-  .then(res => {
-    response =  res.data;
-  })
-  .catch(e => {
-    if(e.response.data.message[0].messages.length == 1 && e.response.data.message.length == 1){
-      error =  e.response.data.message[0].messages[0];
-    }else{
-      error = e.response.data.message;
-    }    
-  });
-    
-  if(response){    
-    this.authToken = response.jwt;
-    this.user = response.user;
-    if(file){
-      await this.axiosUploadToStrapi(file, response.user.id, "user", "profile_picture", "users-permissions");
+  createUser = async (email, pw, username, firstName = "", lastName = "", campusId, file) => {
+    let error;
+    let response;
+    await axios.post(this.strapiUrl + '/auth/local/register', {
+      username: username,
+      email: email,
+      password: pw,
+      first_name: firstName,
+      last_name: lastName,
+      campus: campusId
+    })
+      .then(res => {
+        response = res.data;
+      })
+      .catch(e => {
+        if (e.response.data.message[0].messages.length == 1 && e.response.data.message.length == 1) {
+          error = e.response.data.message[0].messages[0];
+        } else {
+          error = e.response.data.message;
+        }
+      });
+
+    if (response) {
+      this.authToken = response.jwt;
+      this.user = response.user;
+      if (file) {
+        await this.axiosUploadToStrapi(file, response.user.id, "user", "profile_picture", "users-permissions");
+      }
+      return { success: true, response: response, error: {} };
+    } else {
+      return { success: false, response: {}, error: error };;
     }
-    return {success:true, response:response, error:{}};
-  }else{
-    return {success:false, response:{}, error: error};;
   }
- }
 
 
 
@@ -323,7 +323,7 @@ class StrapiApiConnection {
       password: pw,
     })
 
-    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/auth/local',sendData, sendConfig);
+    const returnData = await this.axiosPostToStrapi(this.strapiUrl + '/auth/local', sendData, sendConfig);
     this.user = returnData.data.user;
     this.authToken = returnData.data.jwt;
     return returnData;
@@ -342,9 +342,9 @@ class StrapiApiConnection {
   loginAndGetToken = async (id, pw) => {
     let returnData = await this.loginUser(id, pw);
 
-    if(returnData.status == 200){
+    if (returnData.status == 200) {
       return returnData.data.jwt;
-    }else{
+    } else {
       return -1;
     }
   }
@@ -359,9 +359,9 @@ class StrapiApiConnection {
   loginAndGetUser = async (id, pw) => {
     let returnData = await this.loginUser(id, pw);
 
-    if(returnData.status == 200){
+    if (returnData.status == 200) {
       return returnData.data.user;
-    }else{
+    } else {
       return -1;
     }
   }
@@ -371,7 +371,7 @@ class StrapiApiConnection {
   Returns:saved user object
   */
   getUser = () => {
-  return this.user;
+    return this.user;
   }
 
   /* getToken
@@ -379,7 +379,7 @@ class StrapiApiConnection {
   Returns:saved authentication token
   */
   getToken = () => {
-  return this.authToken;
+    return this.authToken;
   }
 
 
@@ -394,7 +394,7 @@ class StrapiApiConnection {
       }
     };
 
-    let returnData  = await axios.get(this.strapiUrl + '/users/profile', sendConfig);
+    let returnData = await axios.get(this.strapiUrl + '/users/profile', sendConfig);
 
     this.user = returnData.data;
     return returnData;
@@ -416,7 +416,7 @@ class StrapiApiConnection {
     };
 
     const sendData = JSON.stringify(dataIn);
-    let response = await con.axiosPutToStrapi(this.strapiUrl+"/users/profile", dataIn, sendConfig);
+    let response = await con.axiosPutToStrapi(this.strapiUrl + "/users/profile", dataIn, sendConfig);
     return response;
   }
 
@@ -426,8 +426,8 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  addScannedArtworkToUser = async (artworkIdArray) => { 
-    let response =  await this.axiosRequestAddRelationEntryToUser('scanned_artworks',artworkIdArray);
+  addScannedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser('scanned_artworks', artworkIdArray);
     return response;
   }
 
@@ -437,9 +437,9 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  addLikedArtworkToUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestAddRelationEntryToUser('liked_artworks',artworkIdArray);
-   return response;
+  addLikedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser('liked_artworks', artworkIdArray);
+    return response;
   }
 
   /* addDislikedArtworkToUser
@@ -448,9 +448,9 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  addDislikedArtworkToUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestAddRelationEntryToUser('disliked_artworks',artworkIdArray);
-   return response;
+  addDislikedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser('disliked_artworks', artworkIdArray);
+    return response;
   }
 
   /* addSolvedArtworkToUser
@@ -459,9 +459,9 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  addSolvedArtworkToUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestAddRelationEntryToUser('solved_artworks',artworkIdArray);
-   return response;
+  addSolvedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser('solved_artworks', artworkIdArray);
+    return response;
   }
 
   /* removeScannedArtworkFromUser
@@ -471,7 +471,7 @@ class StrapiApiConnection {
   Returns: api request reponse
   */
   removeScannedArtworkFromUser = async (artworkIdArray) => {
-    let response =  await this.axiosRequestRemoveRelationToUser('scanned_artworks',artworkIdArray);
+    let response = await this.axiosRequestRemoveRelationToUser('scanned_artworks', artworkIdArray);
     return response;
   }
 
@@ -481,9 +481,9 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  removeLikedArtworkFromUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestRemoveRelationToUser('liked_artworks',artworkIdArray);
-   return response;
+  removeLikedArtworkFromUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestRemoveRelationToUser('liked_artworks', artworkIdArray);
+    return response;
   }
 
   /* removeDislikedArtworkFromUser
@@ -492,9 +492,9 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  removeDislikedArtworkFromUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestRemoveRelationToUser('disliked_artworks',artworkIdArray);
-   return response;
+  removeDislikedArtworkFromUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestRemoveRelationToUser('disliked_artworks', artworkIdArray);
+    return response;
   }
 
   /* removeSolvedArtworkFromUser
@@ -503,10 +503,67 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  removeSolvedArtworkFromUser = async (artworkIdArray) => { 
-   let response =  await this.axiosRequestRemoveRelationToUser('solved_artworks',artworkIdArray);
-   return response;
+  removeSolvedArtworkFromUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestRemoveRelationToUser('solved_artworks', artworkIdArray);
+    return response;
   }
+
+  /*addPointsToUser
+  Function adds given number of points to the user total points
+  Accepts:
+   - numPoints - integer value of points to add to the total points
+  Returns: api request reponse
+  */
+  addPointsToUser = async (numPoints) => {
+    //await this.syncRemoteToLocalUser();
+    let newPoints = numPoints + this.user.total_points;
+    let response = await this.updatePointsForUser(newPoints);
+    return response;
+  }
+
+  /*addPointsToUser
+  Function adds given number of points to the user total points
+  Accepts:
+   - numPoints - integer value of points to add to the total points
+  Returns: api request reponse
+  */
+  addPointsToUser = async (numPoints) => {
+    //await this.syncRemoteToLocalUser();
+    let newPoints = numPoints + this.user.total_points;
+    let response = await this.updatePointsForUser(newPoints);
+    return response;
+  }
+
+  /*removePointsFromUser
+  Function remove given number of points from the user total points
+  Accepts:
+   - numPoints - integer value of points to remove from the total points
+  Returns: api request reponse
+  */
+  removePointsFromUser = async (numPoints) => {
+    //await this.syncRemoteToLocalUser();
+    let newPoints = this.user.total_points - numPoints; 
+    let response = await this.updatePointsForUser(newPoints);
+    return response;
+  }
+
+  /*updatePointsForUser
+  Function updates users total points to a given number
+  Accepts:
+   - numPoints - integer value of points to update the total points
+  Returns: api request reponse
+  */
+  updatePointsForUser = async (numPoints) => {
+    await this.syncRemoteToLocalUser();
+    let response = await this.updateRemoteUser({ "total_points": numPoints });
+    console.log(response);
+    if (response.status == 200) {
+      this.user.total_points = response.data.total_points;
+      console.log('this.user', this.user);
+    }
+    return response;
+  }
+
 
   /* axiosRequestAddRelationEntryToUser 
   Function that adds to users specified relation field new relations of the relation type specified by entry ids
@@ -519,15 +576,15 @@ class StrapiApiConnection {
     await this.syncRemoteToLocalUser();
 
     let existingEntries = [];
-    this.user[relationFeildName].forEach( entry => {
+    this.user[relationFeildName].forEach(entry => {
       existingEntries.push(entry.id);
     })
 
     let sendArray = existingEntries.concat(relatedEntriesIdArray);
-    sendArray = [...new Set([...existingEntries,...relatedEntriesIdArray])]
+    sendArray = [...new Set([...existingEntries, ...relatedEntriesIdArray])]
 
-    let response = await this.updateRemoteUser({ [relationFeildName] : sendArray });
-    if(response.status == 200){
+    let response = await this.updateRemoteUser({ [relationFeildName]: sendArray });
+    if (response.status == 200) {
       this.user[relationFeildName] = response.data[relationFeildName];
     }
     return response;
@@ -545,11 +602,11 @@ class StrapiApiConnection {
     await this.syncRemoteToLocalUser();
 
     let existingEntries = [];
-    this.user[relationFeildName].forEach( entry => {
+    this.user[relationFeildName].forEach(entry => {
       existingEntries.push(entry.id);
     })
 
-    for(let i = 0; i<relatedEntriesIdArray.length;i++){
+    for (let i = 0; i < relatedEntriesIdArray.length; i++) {
       let j = 0;
       while (j < existingEntries.length) {
         if (existingEntries[j] === relatedEntriesIdArray[i]) {
@@ -560,11 +617,11 @@ class StrapiApiConnection {
       }
     }
 
-    let response = await this.updateRemoteUser({[relationFeildName]:existingEntries});
-    console.log("axiosRequestRemoveRelationToUser"+ " "+ relationFeildName, response);
+    let response = await this.updateRemoteUser({ [relationFeildName]: existingEntries });
+    console.log("axiosRequestRemoveRelationToUser" + " " + relationFeildName, response);
     console.log("axiosRequestRemoveRelationToUser", response.status);
     console.log(relationFeildName, response.data[relationFeildName]);
-    if(response.status == 200){
+    if (response.status == 200) {
       this.user[relationFeildName] = response.data[relationFeildName];
       console.log('this.user', this.user);
     }
@@ -581,9 +638,9 @@ class StrapiApiConnection {
   Returns: full post response from strapi api if successfull or -1 if failed
   */
   axiosPostToStrapi = async (url, data, headerConfig) => {
-    var returnedData = {status:-1};
+    var returnedData = { status: -1 };
     try {
-      returnedData = await axios.post(url,data, headerConfig);
+      returnedData = await axios.post(url, data, headerConfig);
     } catch (error) {
       console.log(error);
       console.log(url);
@@ -591,9 +648,9 @@ class StrapiApiConnection {
       console.log(headerConfig);
     }
 
-    if(returnedData.status == 200){
+    if (returnedData.status == 200) {
       return returnedData;
-    }else{
+    } else {
       console.log('Error in axiosPostToStrapi');
       console.log(returnedData);
       return -1;
@@ -610,9 +667,9 @@ class StrapiApiConnection {
   Returns: full put response from strapi api if successfull or -1 if failed
   */
   axiosPutToStrapi = async (url, data, headerConfig) => {
-    var returnedData = {status:-1};
+    var returnedData = { status: -1 };
     try {
-      returnedData = await axios.put(url,data, headerConfig);
+      returnedData = await axios.put(url, data, headerConfig);
     } catch (error) {
       console.log(error);
       console.log(url);
@@ -620,9 +677,9 @@ class StrapiApiConnection {
       console.log(headerConfig);
     }
 
-    if(returnedData.status == 200){
+    if (returnedData.status == 200) {
       return returnedData;
-    }else{
+    } else {
       console.log('Error in axiosPostToStrapi');
       console.log(returnedData);
       return -1;
@@ -639,7 +696,7 @@ class StrapiApiConnection {
   Returns: full post response from strapi api if successfull or -1 if failed
   */
   axiosDeleteFromStrapi = async (url, headerConfig) => {
-    var returnedData = {status:-1};
+    var returnedData = { status: -1 };
     try {
       returnedData = await axios.delete(url, headerConfig);
     } catch (error) {
@@ -649,9 +706,9 @@ class StrapiApiConnection {
       console.log(headerConfig);
     }
 
-    if(returnedData.status == 200){
+    if (returnedData.status == 200) {
       return returnedData;
-    }else{
+    } else {
       console.log('Error in axiosDeleteFromStrapi');
       console.log(returnedData);
       return -1;
@@ -683,7 +740,7 @@ class StrapiApiConnection {
     formData.append('ref', entryType) // optional, you need it if you want to link the image to an entry
     formData.append('refId', entryId) // optional, you need it if you want to link the image to an entry
     formData.append('field', entryFieldName) // optional, you need it if you want to link the image to an entry
-    if(source && source != ''){
+    if (source && source != '') {
       formData.append('source', source);
     }
     let returnedData = {};
@@ -697,9 +754,9 @@ class StrapiApiConnection {
       // console.log(headerConfig);
     }
 
-    if(returnedData.status == 200){
+    if (returnedData.status == 200) {
       return returnedData;
-    }else{
+    } else {
       console.log('Error in axiosUploadToStrapi');
       console.log(returnedData);
       return -1;
