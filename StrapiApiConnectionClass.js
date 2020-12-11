@@ -578,20 +578,7 @@ class StrapiApiConnection {
   Returns: api request reponse
   */
   addPointsToUser = async (numPoints) => {
-    //await this.syncRemoteToLocalUser();
-    let newPoints = numPoints + this.user.total_points;
-    let response = await this.updatePointsForUser(newPoints);
-    return response;
-  }
-
-  /*addPointsToUser
-  Function adds given number of points to the user total points
-  Accepts:
-   - numPoints - integer value of points to add to the total points
-  Returns: api request reponse
-  */
-  addPointsToUser = async (numPoints) => {
-    //await this.syncRemoteToLocalUser();
+    await this.syncRemoteToLocalUser();
     let newPoints = numPoints + this.user.total_points;
     let response = await this.updatePointsForUser(newPoints);
     return response;
@@ -604,7 +591,7 @@ class StrapiApiConnection {
   Returns: api request reponse
   */
   removePointsFromUser = async (numPoints) => {
-    //await this.syncRemoteToLocalUser();
+    await this.syncRemoteToLocalUser();
     let newPoints = this.user.total_points - numPoints; 
     let response = await this.updatePointsForUser(newPoints);
     return response;
@@ -617,7 +604,7 @@ class StrapiApiConnection {
   Returns: api request reponse
   */
   updatePointsForUser = async (numPoints) => {
-    await this.syncRemoteToLocalUser();
+    //await this.syncRemoteToLocalUser();
     let response = await this.updateRemoteUser({ "total_points": numPoints });
     console.log(response);
     if (response.status == 200) {
