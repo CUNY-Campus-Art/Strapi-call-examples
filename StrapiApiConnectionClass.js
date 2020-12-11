@@ -426,19 +426,42 @@ class StrapiApiConnection {
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
   */
-  addScannedArtworkToUser = async (artworkIdArray) => {
-    await this.syncRemoteToLocalUser();
-
-    let existingArtworks = [];
-    this.user.scanned_artworks.forEach( artwork => {
-      existingArtworks.push(artwork.id);
-    })
-
-    let sendArray = existingArtworks.concat(artworkIdArray);
-    sendArray = [...new Set([...existingArtworks,...artworkIdArray])]
-
-    let response = await this.updateRemoteUser({'scanned_artworks':sendArray});
+  addScannedArtworkToUser = async (artworkIdArray) => { 
+    let response =  await this.axiosRequestAddRelationEntryToUser('scanned_artworks',artworkIdArray);
     return response;
+  }
+
+  /* addLikedArtworkToUser
+  Function that adds to users liked artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addLikedArtworkToUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestAddRelationEntryToUser('liked_artworks',artworkIdArray);
+   return response;
+  }
+
+  /* addDislikedArtworkToUser
+  Function that adds to users disliked artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addDislikedArtworkToUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestAddRelationEntryToUser('disliked_artworks',artworkIdArray);
+   return response;
+  }
+
+  /* addSolvedArtworkToUser
+  Function that adds to users solved artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addSolvedArtworkToUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestAddRelationEntryToUser('solved_artworks',artworkIdArray);
+   return response;
   }
 
   /* removeScannedArtworkFromUser
@@ -448,28 +471,105 @@ class StrapiApiConnection {
   Returns: api request reponse
   */
   removeScannedArtworkFromUser = async (artworkIdArray) => {
+    let response =  await this.axiosRequestRemoveRelationToUser('scanned_artworks',artworkIdArray);
+    return response;
+  }
+
+  /* removeLikedArtworkFromUser
+  Function that removes from users liked artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeLikedArtworkFromUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestRemoveRelationToUser('liked_artworks',artworkIdArray);
+   return response;
+  }
+
+  /* removeDislikedArtworkFromUser
+  Function that removes from users disliked artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeDislikedArtworkFromUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestRemoveRelationToUser('disliked_artworks',artworkIdArray);
+   return response;
+  }
+
+  /* removeSolvedArtworkFromUser
+  Function that removes from users solved artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeSolvedArtworkFromUser = async (artworkIdArray) => { 
+   let response =  await this.axiosRequestRemoveRelationToUser('solved_artworks',artworkIdArray);
+   return response;
+  }
+
+  /* axiosRequestAddRelationEntryToUser 
+  Function that adds to users specified relation field new relations of the relation type specified by entry ids
+  Accepts:
+    - relationFeildName - text value - field name for relationship to User
+    - relatedEntriesIdArray - array of integer id's of related entries that exist
+  Returns: api request reponse
+  */
+  axiosRequestAddRelationEntryToUser = async (relationFeildName, relatedEntriesIdArray) => {
     await this.syncRemoteToLocalUser();
 
-    let existingArtworks = [];
-    this.user.scanned_artworks.forEach( artwork => {
-      existingArtworks.push(artwork.id);
+    let existingEntries = [];
+    this.user[relationFeildName].forEach( entry => {
+      existingEntries.push(entry.id);
     })
 
-    for(let i = 0; i<artworkIdArray.length;i++){
+    let sendArray = existingEntries.concat(relatedEntriesIdArray);
+    sendArray = [...new Set([...existingEntries,...relatedEntriesIdArray])]
+
+    let response = await this.updateRemoteUser({ [relationFeildName] : sendArray });
+    if(response.status == 200){
+      this.user[relationFeildName] = response.data[relationFeildName];
+    }
+    return response;
+  }
+
+
+  /* axiosRequestRemoveRelationToUser 
+  Function that removes from users specified relation field existing relations of the relation type specified by entry ids
+  Accepts:
+   - relationFeildName - text value - field name for relationship to User
+   - relatedEntriesIdArray - array of integer id's of related entries that exist
+  Returns: api request reponse
+  */
+  axiosRequestRemoveRelationToUser = async (relationFeildName, relatedEntriesIdArray) => {
+    await this.syncRemoteToLocalUser();
+
+    let existingEntries = [];
+    this.user[relationFeildName].forEach( entry => {
+      existingEntries.push(entry.id);
+    })
+
+    for(let i = 0; i<relatedEntriesIdArray.length;i++){
       let j = 0;
-      while (j < existingArtworks.length) {
-        if (existingArtworks[j] === artworkIdArray[i]) {
-          existingArtworks.splice(j, 1);
+      while (j < existingEntries.length) {
+        if (existingEntries[j] === relatedEntriesIdArray[i]) {
+          existingEntries.splice(j, 1);
         } else {
           ++j;
         }
       }
     }
 
-    let response = await this.updateRemoteUser({'scanned_artworks':existingArtworks});
+    let response = await this.updateRemoteUser({[relationFeildName]:existingEntries});
+    console.log("axiosRequestRemoveRelationToUser"+ " "+ relationFeildName, response);
+    console.log("axiosRequestRemoveRelationToUser", response.status);
+    console.log(relationFeildName, response.data[relationFeildName]);
+    if(response.status == 200){
+      this.user[relationFeildName] = response.data[relationFeildName];
+      console.log('this.user', this.user);
+    }
     return response;
   }
-
 
   /* axiosPostToStrapi
   Function makes a generic post call to strapi API using provided information

@@ -50,10 +50,18 @@ const main = async () => {
 
   con = new StrapiApiConnection();
 
-  //await con.loginUser("testuser@fakephonymail.com","password123");
-  await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
+  await con.loginUser("newuser@testmail.com","password");
+  //await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
 
-  // con.addScannedArtworkToUser([3,4,5,6]);
+  // await con.addScannedArtworkToUser([3,4,5,6]);
+  // await con.addLikedArtworkToUser([3,4,5,6]);
+  // await con.addDislikedArtworkToUser([3,4,5,6]);
+  // await con.addSolvedArtworkToUser([3,4,5,6]);
+  // await con.removeScannedArtworkFromUser([3,4,5,6]);  
+  // await con.removeLikedArtworkFromUser([3,4,5,6]);
+  // await con.removeDislikedArtworkFromUser([3,4,5,6]);
+  // await con.removeSolvedArtworkFromUser([3,4,5,6]);
+  //console.log(response);
   //con.removeScannedArtworkFromUser([3]);
 
   //authToken = await con.loginAndGetToken("artworkmanager","2h2Ghswq$%Oxcl");
