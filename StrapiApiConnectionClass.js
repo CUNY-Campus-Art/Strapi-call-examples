@@ -1,8 +1,8 @@
 class StrapiApiConnection {
 
   constructor(username, password) {
-    //this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
-    this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
+    this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
+    //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
     this.authToken = "";
     this.user = {}
 
@@ -90,6 +90,27 @@ class StrapiApiConnection {
     const { data } = await axios.get(this.strapiUrl + '/artworks?campus.id=' + campusId);
     console.log("getArtworksInCampusById", data);
     return data;
+  };
+
+  /* getArtworksInCampusById
+  Function calls to strapi api get all artwork entries associated to a campus using campus id where the 
+  clue is populated
+
+  Accepts:
+   - campusId - id of campus entry
+  Returns:
+   - JSON data for all artworks associated to the campus
+  */
+  getArtworkWithCluesforCampusById = async (campusId) => {
+    let artworks = await this.getArtworksInCampusById(campusId);
+    let cluedArtworks = [];
+    artworks.forEach((artwork, index)=>{
+      if(artwork.clue!=null){
+        console.log(index)
+        cluedArtworks.push(artwork);
+      }
+    });
+    return artworks;
   };
 
   /* createArtwork

@@ -51,10 +51,13 @@ const main = async () => {
   con = new StrapiApiConnection();
 
   await con.loginUser("newuser@testmail.com","password");
-
-  con.decreaseLikesForArtworkById(3);
-
   //await con.loginUser("artworkmanager","2h2Ghswq$%Oxcl");
+
+  con.getArtworkWithCluesforCampusById(1);
+  
+  //con.increaseLikesForArtworkById(3);
+  //con.increaseLikesForArtworkById(4);
+  //con.increaseLikesForArtworkById(5);
 
   //con.addPointsToUser(10);
   //con.removePointsFromUser(10);
